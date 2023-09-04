@@ -2,6 +2,8 @@ const express = require('express');
 
 const User = require('../Model/UserModel');
 
+const auth = require("../Middleware/auth.js");
+
 const jsw = require("jsonwebtoken");
 
 const sha = require('crypto')
@@ -41,7 +43,7 @@ AuthRoute.post('/Peak-tree/UserSignUp',async (req,res)=>{
 });
 
 
-AuthRoute.get('/Peak-tree/UserSignIn',async (req,res)=>{
+AuthRoute.post('/Peak-tree/UserSignIn',async (req,res)=>{
     try{
         const {email,password} = req.body
 
@@ -61,7 +63,29 @@ AuthRoute.get('/Peak-tree/UserSignIn',async (req,res)=>{
         res.json({token,...user._doc})
     }
     catch(e){
-
+        res.status(500).json({ error: e.message });
     }
 });
+
+AuthRoute.post("/tokenIsValid", async (req, res) => {
+    try {
+        const token = req.header("x-auth-token");
+        if (!token) return res.json(false);
+        const verified = jwt.verify(token, "passwordKey");
+        if (!verified) return res.json(false);
+        
+        const user = await User.findById(verified.id);
+        if (!user) return res.json(false);
+        res.json(true);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+    
+  // get user data
+    AuthRoute.get("/", auth, async (req, res) => {
+        const user = await User.findById(req.user);
+        res.json({ ...user._doc, token: req.token });
+    });
+    
 module.exports = AuthRoute;
