@@ -1,8 +1,22 @@
-const mongoose = require('mongoose');
-const DB ='mongodb+srv://Peak-Tree-com:PeakTree1234!@cluster0.rh6mn0a.mongodb.net/';
+const mongoose = require("mongoose");
 
-mongoose.connect(DB).then(()=>{
-    console.log("Database Connected Successfully");
-}).catch((error)=>{
-    console.log(`Failed to Connect${error}`);
-})
+require("dotenv").config();
+
+const MONGODB_URL = process.env.MONGODB_URL;
+class Database {
+  constructor() {
+    this._connect();
+  }
+  _connect() {
+    mongoose
+      .connect(MONGODB_URL)
+      .then(() => {
+        console.log("Database connection successful!");
+      })
+      .catch((err) => {
+        console.error("database connection failed! \n ", err);
+      });
+  }
+}
+
+module.exports = new Database();
