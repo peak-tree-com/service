@@ -1,7 +1,7 @@
 const sha = require("crypto");
 const Student = require("../../models/student.model");
 const user_sign_up = async (req, res) => {
-  const { name, register_no, email, year, batch, password } = req.body;
+  const { name, register_no, email, year, batch, password, coins } = req.body;
 
   const existingStudent = await Student.findOne({ email: email });
 
@@ -26,6 +26,7 @@ const user_sign_up = async (req, res) => {
     year,
     batch,
     password: hashedPassword,
+    coins
   });
   await student
     .save()

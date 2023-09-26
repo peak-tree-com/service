@@ -31,6 +31,10 @@ const studentSchema = mongoose.Schema({
     required: true,
     type: String,
   },
+  coins: {
+    type: Number,
+    default: 1000
+  }
 });
 
 const student = mongoose.model("Students", studentSchema);
